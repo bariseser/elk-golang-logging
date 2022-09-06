@@ -1,0 +1,27 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/app/app.log
+  tags: ["go-access-log"]
+
+filebeat.config.modules:
+  enabled: true
+  path: /usr/share/filebeat/modules.d/*.yml
+
+output.console:
+  pretty: true
+
+#output.logstash:
+#  enabled: true
+#  hosts: ["logstash:5044"]
+
+#setup.ilm.overwrite: true
+
+#setup.kibana:
+#  host: "kibana:5601"
+
+#output.elasticsearch:
+#  enabled: true
+#  hosts: ["elastic:9200"]
+#  pretty: true
