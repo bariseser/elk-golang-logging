@@ -1,1 +1,3 @@
 app/log/*
+elastic/data/*
+.DS_STORE

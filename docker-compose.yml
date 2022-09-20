@@ -16,12 +16,45 @@ services:
     volumes:
       - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
       - ./app/log:/var/log/app
-    depends_on:
-      - logstash
     networks:
       - elk-stack
     ports:
       - "5400:5400"
+    depends_on:
+      - logstash
+  logstash:
+    image: logstash:8.3.3
+    container_name: "logstash"
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/config/pipeline.conf:/usr/share/logstash/pipeline/pipeline.conf
+    networks:
+      - elk-stack
+  elastic:
+    image: elasticsearch:8.3.3
+    container_name: "elastic"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    volumes:
+      - ./elastic/data:/usr/share/elasticsearch/data
+      - ./elastic/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - elk-stack
+  kibana:
+    image: kibana:8.3.3
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - elk-stack
+    environment:
+      - elasticsearch.hosts=http://elastic:9200
+    depends_on:
+      - elastic
 networks:
   elk-stack:
     driver: bridge
